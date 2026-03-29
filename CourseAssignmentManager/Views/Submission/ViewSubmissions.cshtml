@@ -1,0 +1,83 @@
+@model List<CourseAssignmentManager.Models.Submission>
+@{
+    var assignment = ViewBag.Assignment as CourseAssignmentManager.Models.Assignment;
+    var students = ViewBag.Students as List<CourseAssignmentManager.Models.User> ?? new();
+}
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <div>
+            <h1>Student Submissions</h1>
+            @if (assignment != null)
+            {
+                <p>Assignment: <strong style="color:var(--text);">@assignment.AssignmentName</strong></p>
+            }
+        </div>
+        <a href="/Assignment/AssignmentList" class="btn btn-outline">← Back to Assignments</a>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid" style="grid-template-columns: repeat(2,1fr); max-width:500px; margin-bottom:1.5rem;">
+        <div class="stat-card">
+            <div class="stat-number">@Model.Count</div>
+            <div class="stat-label">📥 Total Submissions</div>
+        </div>
+        <div class="stat-card green">
+            <div class="stat-number">@students.Count</div>
+            <div class="stat-label">🎓 Students Submitted</div>
+        </div>
+    </div>
+
+    <!-- SUBMISSIONS TABLE -->
+    <div class="card">
+        @if (Model.Count == 0)
+        {
+            <div class="empty-state">
+                <h3>No submissions yet</h3>
+                <p>Students haven't submitted this assignment yet</p>
+            </div>
+        }
+        else
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sr</th>
+                        <th>Student Name</th>
+                        <th>File</th>
+                        <th>Submitted At</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int sr = 1;
+                    }
+                    @foreach (var submission in Model)
+                    {
+                        var student = students.FirstOrDefault(s => s.UserId == submission.StudentId);
+                        <tr>
+                            <td style="color:var(--muted); font-family:'DM Mono',monospace; font-size:0.8rem;">@sr</td>
+                            <td>
+                                <strong>@(student?.Name ?? "Unknown")</strong>
+                                <div style="color:var(--muted); font-size:0.78rem;">@(student?.Email ?? "")</div>
+                            </td>
+                            <td style="font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--accent2);">
+                                @submission.FilePath
+                            </td>
+                            <td style="color:var(--muted); font-size:0.85rem;">
+                                @submission.SubmittedAt.ToLocalTime().ToString("MMM dd, yyyy – hh:mm tt")
+                            </td>
+                            <td>
+                                <a href="/uploads/@submission.FilePath" class="btn btn-outline btn-sm" download>↓ Download</a>
+                            </td>
+                        </tr>
+                        sr++;
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

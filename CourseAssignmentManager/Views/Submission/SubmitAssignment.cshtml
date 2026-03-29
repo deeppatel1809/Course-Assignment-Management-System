@@ -1,0 +1,58 @@
+@model CourseAssignmentManager.Models.Assignment
+@{
+    var course = ViewBag.Course as CourseAssignmentManager.Models.Course;
+}
+
+<div class="container">
+    <div class="page-header">
+        <div>
+            <h1>Submit Assignment</h1>
+            <p>Upload your completed work</p>
+        </div>
+        <a href="/Assignment/AssignmentList" class="btn btn-outline">← Back to Assignments</a>
+    </div>
+
+    <!-- ASSIGNMENT INFO -->
+    <div class="card" style="margin-bottom: 1.25rem;">
+        <div style="display:flex; gap:12px; align-items:flex-start;">
+            <div style="font-size:2rem;">📝</div>
+            <div>
+                <h2 style="font-size:1.2rem; font-weight:700; margin-bottom:6px;">@Model.AssignmentName</h2>
+                @if (course != null)
+                {
+                    <span class="badge badge-purple" style="margin-bottom:8px; display:inline-block;">@course.CourseName</span>
+                }
+                <p style="color:var(--muted); font-size:0.9rem; margin-bottom:8px;">@Model.Description</p>
+                <span style="font-size:0.85rem; color: @(Model.DueDate < DateTime.UtcNow ? "var(--danger)" : "var(--accent2)")">
+                    Due: @Model.DueDate.ToLocalTime().ToString("MMMM dd, yyyy – hh:mm tt")
+                    @if (Model.DueDate < DateTime.UtcNow){ <span>(Overdue)</span> }
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- UPLOAD FORM -->
+    <div style="max-width: 560px;">
+        <div class="card">
+            <h3 style="font-size:1rem; font-weight:600; margin-bottom:1.25rem;">Upload Your File</h3>
+
+            <form method="post" action="/Submission/SubmitAssignment" enctype="multipart/form-data">
+                <input type="hidden" name="assignmentId" value="@Model.AssignmentId" />
+
+                <div class="form-group">
+                    <label>Select File</label>
+                    <input type="file" name="file" class="form-control" required
+                           style="padding:8px 14px; cursor:pointer;" />
+                    <p style="color:var(--muted); font-size:0.78rem; margin-top:6px;">
+                        Accepted formats: PDF, DOCX, ZIP, TXT, PNG, JPG (max 20MB)
+                    </p>
+                </div>
+
+                <div style="display:flex; gap:10px; margin-top:1.5rem;">
+                    <button type="submit" class="btn btn-success">📤 Submit Assignment</button>
+                    <a href="/Assignment/AssignmentList" class="btn btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,132 @@
+﻿@{
+    var userName = Context.Session.GetString("UserName");
+    var assignments = ViewBag.RecentAssignments as List<CourseAssignmentManager.Models.Assignment> ?? new List<CourseAssignmentManager.Models.Assignment>();
+    var recentCourses = ViewBag.RecentCourses as List<CourseAssignmentManager.Models.Course> ?? new List<CourseAssignmentManager.Models.Course>();
+    var submittedIds = ViewBag.SubmittedAssignmentIds as List<int> ?? new List<int>();
+}
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <div>
+            <h1>Welcome, @userName 🎓</h1>
+            <p>Track your courses and assignments</p>
+        </div>
+        <a href="/Assignment/AssignmentList" class="btn btn-primary">View All Assignments</a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <!-- STATS -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">@ViewBag.CoursesCount</div>
+            <div class="stat-label">📚 Available Courses</div>
+        </div>
+        <div class="stat-card green">
+            <div class="stat-number">@ViewBag.AssignmentsCount</div>
+            <div class="stat-label">📝 Total Assignments</div>
+        </div>
+        <div class="stat-card orange">
+            <div class="stat-number">@ViewBag.SubmittedCount</div>
+            <div class="stat-label">✅ My Submissions</div>
+        </div>
+    </div>
+
+    <!-- UPCOMING ASSIGNMENTS -->
+    <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+            <h2 style="font-size:1.1rem; font-weight:600;">Upcoming Assignments</h2>
+            <a href="/Assignment/AssignmentList" style="color:var(--accent); font-size:0.875rem; text-decoration:none;">View all →</a>
+        </div>
+
+        @if (assignments.Count == 0)
+        {
+            <div class="empty-state">
+                <h3>No assignments yet</h3>
+                <p>Your teacher hasn't posted any assignments yet</p>
+            </div>
+        }
+        else
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>Assignment</th>
+                        <th>Course</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var assignment in assignments)
+                    {
+                        var course = recentCourses.FirstOrDefault(c => c.CourseId == assignment.CourseId);
+                        bool submitted = submittedIds.Contains(assignment.AssignmentId);
+                        bool overdue = assignment.DueDate < DateTime.UtcNow;
+                        <tr>
+                            <td><strong>@assignment.AssignmentName</strong></td>
+                            <td>
+                                <span class="badge badge-purple">@(course?.CourseName ?? "Unknown")</span>
+                            </td>
+                            <td style="color: @(overdue ? "var(--danger)" : "var(--muted)"); font-size:0.875rem;">
+                                @assignment.DueDate.ToLocalTime().ToString("MMM dd, yyyy")
+                            </td>
+                            <td>
+                                @if (submitted)
+                                {
+                                    <span class="badge badge-green">✓ Submitted</span>
+                                }
+                                else if (overdue)
+                                {
+                                    <span class="badge badge-red">Overdue</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-orange">Pending</span>
+                                }
+                            </td>
+                            <td>
+                                @if (submitted)
+                                {
+                                    <span style="color:var(--muted); font-size:0.8rem;">Done ✓</span>
+                                }
+                                else
+                                {
+                                    <a href="/Submission/SubmitAssignment/@assignment.AssignmentId" class="btn btn-success btn-sm">Submit</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem;">
+        <a href="/Course/CourseList" style="text-decoration:none;">
+            <div class="card" style="cursor:pointer; transition:border-color 0.15s;"
+                 onmouseover="this.style.borderColor='var(--accent2)'"
+                 onmouseout="this.style.borderColor='var(--border)'">
+                <div style="font-size:1.5rem; margin-bottom:8px;">📚</div>
+                <div style="font-weight:600; margin-bottom:4px;">Browse Courses</div>
+                <div style="color:var(--muted); font-size:0.85rem;">View all available courses</div>
+            </div>
+        </a>
+        <a href="/Assignment/AssignmentList" style="text-decoration:none;">
+            <div class="card" style="cursor:pointer; transition:border-color 0.15s;"
+                 onmouseover="this.style.borderColor='var(--accent2)'"
+                 onmouseout="this.style.borderColor='var(--border)'">
+                <div style="font-size:1.5rem; margin-bottom:8px;">📤</div>
+                <div style="font-weight:600; margin-bottom:4px;">Submit Assignment</div>
+                <div style="color:var(--muted); font-size:0.85rem;">Upload your completed work</div>
+            </div>
+        </a>
+    </div>
+</div>

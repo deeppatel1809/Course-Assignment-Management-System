@@ -1,0 +1,95 @@
+@model List<CourseAssignmentManager.Models.Course>
+@{
+    var role = Context.Session.GetString("UserRole");
+    var teachers = ViewBag.Teachers as List<CourseAssignmentManager.Models.User> ?? new();
+}
+
+<div class="container">
+    <div class="page-header">
+        <div>
+            <h1>Courses</h1>
+            <p>@(role == "Teacher" ? "Manage your courses" : "All available courses")</p>
+        </div>
+        @if (role == "Teacher")
+        {
+            <a href="/Course/CreateCourse" class="btn btn-primary">+ Create Course</a>
+        }
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <div class="card">
+        @if (Model.Count == 0)
+        {
+            <div class="empty-state">
+                <h3>No courses found</h3>
+                @if (role == "Teacher")
+                {
+                    <p>You haven't created any courses yet</p>
+                    <a href="/Course/CreateCourse" class="btn btn-primary">Create First Course</a>
+                }
+                else
+                {
+                    <p>No courses have been created yet</p>
+                }
+            </div>
+        }
+        else
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sr</th>
+                        <th>Course Name</th>
+                        <th>Description</th>
+                        @if (role == "Student")
+                        {
+                            <th>Teacher</th>
+                        }
+                        <th>Created</th>
+                        @if (role == "Teacher")
+                        {
+                            <th>Actions</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int sr = 1;
+                    }
+                    @foreach (var course in Model)
+                    {
+                        var teacher = teachers.FirstOrDefault(t => t.UserId == course.TeacherId);
+                        <tr>
+                            <td style="color:var(--muted); font-family:'DM Mono',monospace; font-size:0.8rem;">@sr</td>
+                            <td><strong>@course.CourseName</strong></td>
+                            <td style="color:var(--muted); max-width:300px;">
+                                @(string.IsNullOrWhiteSpace(course.Description) ? "-" : (course.Description.Length > 80 ? course.Description.Substring(0, 80) + "..." : course.Description))
+                            </td>
+                            @if (role == "Student")
+                            {
+                                <td>
+                                    <span class="badge badge-orange">@(teacher?.Name ?? "Unknown")</span>
+                                </td>
+                            }
+                            <td style="color:var(--muted); font-size:0.85rem;">@course.CreatedAt.ToString("MMM dd, yyyy")</td>
+                            @if (role == "Teacher")
+                            {
+                                <td>
+                                    <a href="/Assignment/AssignmentList" class="btn btn-outline btn-sm">Assignments</a>
+                                    <a href="/Course/DeleteCourse/@course.CourseId"
+                                       class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Delete this course?')">Delete</a>
+                                </td>
+                            }
+                        </tr>
+                        sr++;
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

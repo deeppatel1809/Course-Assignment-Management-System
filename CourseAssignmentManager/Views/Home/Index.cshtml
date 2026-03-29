@@ -1,0 +1,564 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Course Manager — Learn & Teach</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --bg: #0f1117;
+            --surface: #1a1d27;
+            --border: #2a2d3a;
+            --accent: #6c63ff;
+            --accent2: #00d4aa;
+            --text: #e8e9f0;
+            --muted: #8889a0;
+            --teacher: #f5a623;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2.5rem;
+            height: 64px;
+            background: rgba(15,17,23,0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .nav-brand span {
+            color: var(--text);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-nav {
+            padding: 7px 18px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.15s;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-outline-nav {
+            border: 1px solid var(--border);
+            color: var(--muted);
+            background: transparent;
+        }
+
+        .btn-outline-nav:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-primary-nav {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary-nav:hover {
+            background: #5a52e0;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+            background: radial-gradient(ellipse at 50% 0%, rgba(108,99,255,0.15) 0%, transparent 70%);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: 20px;
+            background: rgba(108,99,255,0.15);
+            border: 1px solid rgba(108,99,255,0.3);
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.25rem;
+        }
+
+        .hero h1 span {
+            color: var(--accent);
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--muted);
+            max-width: 560px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.7;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-hero {
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-hero-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-hero-primary:hover {
+            background: #5a52e0;
+            transform: translateY(-2px);
+        }
+
+        .btn-hero-secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-hero-secondary:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            padding: 2rem;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-item .num {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: 'DM Mono', monospace;
+        }
+
+        .stat-item .lbl {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .features {
+            padding: 5rem 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .features .sub {
+            text-align: center;
+            color: var(--muted);
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.75rem;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            color: var(--muted);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        .how {
+            padding: 5rem 2rem;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+        }
+
+        .how-inner {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .how h2 {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .how .sub {
+            text-align: center;
+            color: var(--muted);
+            margin-bottom: 3rem;
+        }
+
+        .how-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .how-side h3 {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.25rem;
+            padding: 5px 14px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .teacher-side h3 {
+            background: rgba(245,166,35,0.15);
+            color: var(--teacher);
+        }
+
+        .student-side h3 {
+            background: rgba(0,212,170,0.15);
+            color: var(--accent2);
+        }
+
+        .step {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            margin-bottom: 1.25rem;
+        }
+
+        .step-num {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            font-family: 'DM Mono', monospace;
+        }
+
+        .teacher-side .step-num {
+            background: rgba(245,166,35,0.15);
+            color: var(--teacher);
+        }
+
+        .student-side .step-num {
+            background: rgba(0,212,170,0.15);
+            color: var(--accent2);
+        }
+
+        .step-text strong {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .step-text span {
+            color: var(--muted);
+            font-size: 0.875rem;
+        }
+
+        .cta {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: radial-gradient(ellipse at 50% 100%, rgba(108,99,255,0.12) 0%, transparent 70%);
+        }
+
+        .cta h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta p {
+            color: var(--muted);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-cta {
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+
+        .btn-cta-teacher {
+            background: var(--teacher);
+            color: #0f1117;
+        }
+
+        .btn-cta-teacher:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-cta-student {
+            background: var(--accent2);
+            color: #0f1117;
+        }
+
+        .btn-cta-student:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+
+        @@media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .how-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                gap: 1.5rem;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <a href="/" class="nav-brand"><span>Course Manager</span></a>
+        <div class="nav-right">
+            <a href="/Account/Login" class="btn-nav btn-outline-nav">Login</a>
+            <a href="/Account/Register" class="btn-nav btn-primary-nav">Register</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-badge">Course & Assignment Management System</div>
+        <h1>The smarter way to<br /><span>teach and learn</span></h1>
+        <p>A platform where teachers create courses and assignments, and students submit their work — all in one place.</p>
+        <div class="hero-buttons">
+            <a href="/Account/Register" class="btn-hero btn-hero-primary">🚀 Get Started Free</a>
+            <a href="#how-it-works" class="btn-hero btn-hero-secondary">See How It Works</a>
+        </div>
+    </section>
+
+    <!-- STATS BAR -->
+    <div class="stats-bar">
+        <div class="stat-item"><div class="num">2</div><div class="lbl">User Roles</div></div>
+        <div class="stat-item"><div class="num">∞</div><div class="lbl">Courses</div></div>
+        <div class="stat-item"><div class="num">∞</div><div class="lbl">Assignments</div></div>
+        <div class="stat-item"><div class="num">100%</div><div class="lbl">Free to Use</div></div>
+    </div>
+
+    <!-- FEATURES -->
+    <section class="features">
+        <h2>Everything you need</h2>
+        <p class="sub">All features built for both teachers and students</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔐</div>
+                <h3>Role Based Access</h3>
+                <p>Register as a Teacher or Student. Each role sees a different dashboard with features made for them.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📚</div>
+                <h3>Course Management</h3>
+                <p>Teachers can create and manage multiple courses. Students can view all available courses easily.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📝</div>
+                <h3>Assignment Creation</h3>
+                <p>Teachers post assignments with title, description and due date inside their courses.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📤</div>
+                <h3>File Submission</h3>
+                <p>Students upload their assignment files directly. Supports PDF, DOCX, ZIP and more formats.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📥</div>
+                <h3>View Submissions</h3>
+                <p>Teachers can see all student submissions for each assignment and download their files.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Simple and Fast</h3>
+                <p>Clean modern interface. No confusion. Everything is where you expect it to be.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="how" id="how-it-works">
+        <div class="how-inner">
+            <h2>How it works</h2>
+            <p class="sub">Simple steps for both teachers and students</p>
+            <div class="how-grid">
+                <div class="how-side teacher-side">
+                    <h3>👨‍🏫 For Teachers</h3>
+                    <div class="step">
+                        <div class="step-num">1</div>
+                        <div class="step-text"><strong>Register as Teacher</strong><span>Create your account and select Teacher role</span></div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">2</div>
+                        <div class="step-text"><strong>Create a Course</strong><span>Add course name and description</span></div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">3</div>
+                        <div class="step-text"><strong>Post Assignments</strong><span>Create assignments with due dates inside your course</span></div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">4</div>
+                        <div class="step-text"><strong>View Submissions</strong><span>See and download student submitted files</span></div>
+                    </div>
+                </div>
+                <div class="how-side student-side">
+                    <h3>🎓 For Students</h3>
+                    <div class="step">
+                        <div class="step-num">1</div>
+                        <div class="step-text"><strong>Register as Student</strong><span>Create your account and select Student role</span></div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">2</div>
+                        <div class="step-text"><strong>Browse Courses</strong><span>View all available courses on the platform</span></div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">3</div>
+                        <div class="step-text"><strong>View Assignments</strong><span>See all assignments with their due dates</span></div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">4</div>
+                        <div class="step-text"><strong>Submit Your Work</strong><span>Upload your file before the due date</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <h2>Ready to get started?</h2>
+        <p>Join as a Teacher or Student and start today</p>
+        <div class="cta-buttons">
+            <a href="/Account/Register" class="btn-cta btn-cta-teacher">👨‍🏫 Join as Teacher</a>
+            <a href="/Account/Register" class="btn-cta btn-cta-student">🎓 Join as Student</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2025 Course Manager — Built with ASP.NET Core MVC & PostgreSQL</p>
+    </footer>
+
+</body>
+</html>

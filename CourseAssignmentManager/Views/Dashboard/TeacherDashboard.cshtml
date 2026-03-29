@@ -1,0 +1,110 @@
+﻿@{
+    var userName = Context.Session.GetString("UserName");
+    var recentSubs = ViewBag.RecentSubmissions as List<CourseAssignmentManager.Models.Submission> ?? new List<CourseAssignmentManager.Models.Submission>();
+    var recentStudents = ViewBag.RecentStudents as List<CourseAssignmentManager.Models.User> ?? new List<CourseAssignmentManager.Models.User>();
+    var recentAssignments = ViewBag.RecentAssignments as List<CourseAssignmentManager.Models.Assignment> ?? new List<CourseAssignmentManager.Models.Assignment>();
+}
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <div>
+            <h1>Welcome, @userName 👋</h1>
+            <p>Here's an overview of your teaching activity</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+            <a href="/Course/CreateCourse" class="btn btn-outline">+ New Course</a>
+            <a href="/Assignment/CreateAssignment" class="btn btn-primary">+ New Assignment</a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <!-- STATS -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">@ViewBag.CoursesCount</div>
+            <div class="stat-label">📚 My Courses</div>
+        </div>
+        <div class="stat-card green">
+            <div class="stat-number">@ViewBag.AssignmentsCount</div>
+            <div class="stat-label">📝 Assignments Created</div>
+        </div>
+        <div class="stat-card orange">
+            <div class="stat-number">@ViewBag.SubmissionsCount</div>
+            <div class="stat-label">📥 Submissions Received</div>
+        </div>
+    </div>
+
+    <!-- RECENT SUBMISSIONS -->
+    <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+            <h2 style="font-size:1.1rem; font-weight:600;">Recent Submissions</h2>
+            <a href="/Assignment/AssignmentList" style="color:var(--accent); font-size:0.875rem; text-decoration:none;">View all →</a>
+        </div>
+
+        @if (recentSubs.Count == 0)
+        {
+            <div class="empty-state">
+                <h3>No submissions yet</h3>
+                <p>Students haven't submitted any assignments yet</p>
+            </div>
+        }
+        else
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Assignment</th>
+                        <th>File</th>
+                        <th>Submitted At</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var submission in recentSubs)
+                    {
+                        var student = recentStudents.FirstOrDefault(s => s.UserId == submission.StudentId);
+                        var assignment = recentAssignments.FirstOrDefault(a => a.AssignmentId == submission.AssignmentId);
+                        <tr>
+                            <td><strong>@(student?.Name ?? "Unknown")</strong></td>
+                            <td style="color:var(--muted);">@(assignment?.AssignmentName ?? "Unknown")</td>
+                            <td style="font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--accent2);">@submission.FilePath</td>
+                            <td style="color:var(--muted); font-size:0.85rem;">@submission.SubmittedAt.ToLocalTime().ToString("MMM dd, yyyy")</td>
+                            <td>
+                                <a href="/uploads/@submission.FilePath" class="btn btn-outline btn-sm" download>↓ Download</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem;">
+        <a href="/Course/CourseList" style="text-decoration:none;">
+            <div class="card" style="cursor:pointer; transition:border-color 0.15s;"
+                 onmouseover="this.style.borderColor='var(--accent)'"
+                 onmouseout="this.style.borderColor='var(--border)'">
+                <div style="font-size:1.5rem; margin-bottom:8px;">📚</div>
+                <div style="font-weight:600; margin-bottom:4px;">Manage Courses</div>
+                <div style="color:var(--muted); font-size:0.85rem;">Create, view and delete courses</div>
+            </div>
+        </a>
+        <a href="/Assignment/AssignmentList" style="text-decoration:none;">
+            <div class="card" style="cursor:pointer; transition:border-color 0.15s;"
+                 onmouseover="this.style.borderColor='var(--accent)'"
+                 onmouseout="this.style.borderColor='var(--border)'">
+                <div style="font-size:1.5rem; margin-bottom:8px;">📝</div>
+                <div style="font-weight:600; margin-bottom:4px;">Manage Assignments</div>
+                <div style="color:var(--muted); font-size:0.85rem;">Create assignments and view student submissions</div>
+            </div>
+        </a>
+    </div>
+</div>
